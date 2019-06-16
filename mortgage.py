@@ -72,18 +72,21 @@ class Mortgage:
         Assume a payment, how long does it to pay off the loan, assuming no penalty
         
         :param payment: monthly payment, None for default.
+        :return: month, total interest
         """
         balance = dollar(self.amount())
         monthly = payment if payment is not None else self.monthly_payment()
         month = 0
         rate = decimal.Decimal(str(self.rate())).quantize(decimal.Decimal('.000001'))
+        total_interest = decimal.Decimal(0)
         while balance > 0:
             interest_unrounded = balance * rate * decimal.Decimal(1)/MONTHS_IN_YEAR
             interest = dollar(interest_unrounded, round=decimal.ROUND_HALF_UP)
+            total_interest += interest
             principle = monthly - interest
             balance -= principle
             month += 1
-        return month
+        return month, interest
 
 
 def print_summary(m):
