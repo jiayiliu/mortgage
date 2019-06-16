@@ -67,6 +67,25 @@ class Mortgage:
             yield principle, interest
             balance -= principle
 
+    def month_to_mature(self, payment=None):
+        """
+        Assume a payment, how long does it to pay off the loan, assuming no penalty
+        
+        :param payment: monthly payment, None for default.
+        """
+        balance = dollar(self.amount())
+        monthly = payment if payment is not None else self.monthly_payment()
+        month = 0
+        rate = decimal.Decimal(str(self.rate())).quantize(decimal.Decimal('.000001'))
+        while balance > 0:
+            interest_unrounded = balance * rate * decimal.Decimal(1)/MONTHS_IN_YEAR
+            interest = dollar(interest_unrounded, round=decimal.ROUND_HALF_UP)
+            principle = monthly - interest
+            balance -= principle
+            month += 1
+        return month
+
+
 def print_summary(m):
     print('{0:>25s}:  {1:>12.6f}'.format('Rate', m.rate()))
     print('{0:>25s}:  {1:>12.6f}'.format('Month Growth', m.month_growth()))
