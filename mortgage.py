@@ -86,7 +86,7 @@ class Mortgage:
             principle = monthly - interest
             balance -= principle
             month += 1
-        return month, interest
+        return month, total_interest
 
 
 def print_summary(m):
